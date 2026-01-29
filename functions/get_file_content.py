@@ -7,14 +7,10 @@ def get_file_content(working_directory, file_path):
 
     valid_target = os.path.commonpath([abs_working_directory, target_path]) == abs_working_directory
 
-    try:
-        if valid_target == False:
-            raise Exception(f'Error: Cannot read "{file_path}" as it is outside the permitted working directory')
-        if os.path.isdir(target_path):
-            raise Exception(f'Error: File not found or is not a regular file: "{file_path}"')
-    except Exception as e:
-        print(e)
-        return
+    if valid_target == False:
+        return f'Error: Cannot read "{file_path}" as it is outside the permitted working directory'
+    if os.path.isdir(target_path):
+        return f'Error: File not found or is not a regular file: "{file_path}"'
 
     try:
         with open(target_path, "r") as f:
@@ -24,4 +20,4 @@ def get_file_content(working_directory, file_path):
             
             return content
     except Exception as e:
-        print(f"Error: {e}")
+        return f"Error: {e}"
