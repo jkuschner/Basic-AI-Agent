@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 from prompts import system_prompt
-from call_function import available_functions
+from call_function import available_functions, call_function
 
 parser = argparse.ArgumentParser(description="Chatbot")
 parser.add_argument("prompt", type=str, help="Enter a prompt.")
@@ -43,3 +43,12 @@ print(f"Response:\n{response.text}")
 if response.function_calls != None:
     for function_call in response.function_calls:
         print(f"Calling function: {function_call.name}({function_call.args})")
+        function_call_result = call_function(function_call, verbose=args.verbose)
+        if not function_call_result.parts:
+            raise Exception(f"problem with calling function: {function_call.name} with args: {function_call.args}")
+        if not function_call_result.parts[0].function_response:
+            raise Exception(f"Missing function response when calling function: {function_call.name} with args: {function_call.args}")
+        if not function_call_result.parts[0].function_response.response:
+            raise Exception(f"Missing function response when calling function: {function_call.name} with args: {function_call.args}")
+        if args.verbose:
+            print(f"-> {function_call_result.parts[0].function_response.response}")
