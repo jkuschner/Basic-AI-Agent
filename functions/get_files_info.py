@@ -26,11 +26,18 @@ def get_files_info(working_directory, directory="."):
     if os.path.isdir(target_directory) == False:
         return f'Error: "{directory}" is not a directory'
 
+    result = []
     for entry in os.listdir(target_directory):
         try:
+            file_dict = {}
             fullpath = os.path.join(target_directory, entry)
             print(f"\t- {entry}: file_size={os.path.getsize(fullpath)}, is_dir={os.path.isdir(fullpath)}")
+            file_dict["file_size"] = os.path.getsize(fullpath)
+            file_dict["is_dir"] = os.path.isdir(fullpath)
+            file_dict["name"] = entry
+            result.append(file_dict)
         except OSError:
             return f"Error: file {fullpath} cannot be found or does not exist."
         except Exception as e:
             return f"Error: {e}"
+    return result
